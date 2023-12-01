@@ -2,7 +2,7 @@
 
 simple paste system
 
-## installing
+## installation
 
 ```
 pip install git+https://github.com/st0rmw1ndz/grab
