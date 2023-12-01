@@ -2,6 +2,12 @@
 
 simple paste system
 
+## installing
+
+```
+pip install git+https://github.com/st0rmw1ndz/grab
+```
+
 ## usage
 
 ```
