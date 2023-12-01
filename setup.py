@@ -1,10 +1,12 @@
+from pathlib import Path
+
 import setuptools
 
-with open("README.md") as readme:
-    long_description = readme.read()
+with Path.open("README.md", mode="r") as f:
+    long_description = f.read()
 
-with open("requirements.txt") as req:
-    packages = req.read().splitlines()
+with Path.open("requirements.txt", mode="r") as f:
+    packages = f.read().splitlines()
 
 setuptools.setup(
     name="grab",
@@ -18,7 +20,6 @@ setuptools.setup(
     url="https://github.com/st0rmw1ndz/grab",
     packages=setuptools.find_packages(),
     install_requires=packages,
-    include_package_data=True,
     entry_points={"console_scripts": ["grab=grab:main"]},
     python_requires=">=3.11",
 )
