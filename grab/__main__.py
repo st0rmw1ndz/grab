@@ -73,10 +73,7 @@ def main() -> None:
         epilog="source code: https://github.com/st0rmw1ndz/grab",
         prog="grab",
     )
-    subparsers = parser.add_subparsers(
-        dest="command",
-        title="commands",
-    )
+    subparsers = parser.add_subparsers(dest="command", title="commands")
 
     # copy a paste to the clipboard
     copy_parser = subparsers.add_parser("copy", help="copy a paste to the clipboard")
@@ -85,10 +82,7 @@ def main() -> None:
 
     # write a new paste
     save_parser = subparsers.add_parser("write", help="write a new paste")
-    save_parser.add_argument(
-        "paste",
-        help="name of the paste",
-    )
+    save_parser.add_argument("paste", help="name of the paste")
     save_parser.add_argument(
         "content",
         help="content of the paste (string literal or file path)",
@@ -99,10 +93,7 @@ def main() -> None:
 
     # remove a paste
     rm_parser = subparsers.add_parser("rm", help="remove a paste")
-    rm_parser.add_argument(
-        "paste",
-        help="name of the paste",
-    )
+    rm_parser.add_argument("paste", help="name of the paste")
     rm_parser.set_defaults(func=rm_paste)
 
     # list all available pastes
