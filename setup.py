@@ -10,7 +10,7 @@ with Path.open("requirements.txt", mode="r") as f:
 
 setuptools.setup(
     name="grab",
-    version="1.0.0",
+    version="1.0.1",
     author="st0rm",
     author_email="inthishouseofcards@gmail.com",
     description="simple paste system",
@@ -20,6 +20,10 @@ setuptools.setup(
     url="https://github.com/st0rmw1ndz/grab",
     packages=setuptools.find_packages(),
     install_requires=packages,
-    entry_points={"console_scripts": ["grab=grab:main"]},
+    entry_points={
+        "console_scripts": [
+            "grab=grab.__main__:main",
+        ]
+    },
     python_requires=">=3.11",
 )

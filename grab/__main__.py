@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pyperclip
 
-pastes_path: Path = Path("pastes")
+pastes_path: Path = Path.home() / ".grab"
 
 
 def copy_paste(args: argparse.Namespace) -> None:
@@ -25,7 +25,7 @@ def write_paste(args: argparse.Namespace) -> None:
     """write a new paste"""
 
     if args.content == "":
-        args.content = pyperclip.paste()
+        args.content = "\n".join(pyperclip.paste().splitlines())
 
     # checking if the content is a file path that exists,
     # if so, read the file and use its content
@@ -53,6 +53,10 @@ def rm_paste(args: argparse.Namespace) -> None:
 
 def list_pastes(_: argparse.Namespace) -> None:
     """list all available pastes"""
+
+    if len(list(pastes_path.iterdir())) == 0:
+        print("error: no pastes available")
+        return
 
     print("available pastes:")
     for paste in pastes_path.iterdir():
@@ -106,6 +110,9 @@ def main() -> None:
     list_parser.set_defaults(func=list_pastes)
 
     args = parser.parse_args()
+    if not args.command:
+        parser.print_help()
+        return
     args.func(args)
 
 
