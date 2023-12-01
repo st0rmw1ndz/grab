@@ -1,13 +1,13 @@
 # grab
 
-copy common pastes to the clipboard
+simple paste system
 
 ## usage
 
 ```
 usage: grab [-h] {copy,write,rm,list} ...
 
-copy common pastes to the clipboard
+simple paste system
 
 options:
   -h, --help            show this help message and exit

@@ -65,7 +65,7 @@ def main() -> None:
         pastes_path.mkdir()
 
     parser = argparse.ArgumentParser(
-        description="copy common pastes to the clipboard",
+        description="simple paste system",
         epilog="source code: https://github.com/st0rmw1ndz/grab",
         prog="grab",
     )
