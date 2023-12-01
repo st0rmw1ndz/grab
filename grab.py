@@ -7,6 +7,8 @@ pastes_path: Path = Path("pastes")
 
 
 def copy_paste(args: argparse.Namespace) -> None:
+    """copy a paste to the clipboard"""
+
     paste_path: Path = pastes_path / args.paste
     if not paste_path.exists():
         print(f"error: paste '{args.paste}' does not exist")
@@ -19,13 +21,9 @@ def copy_paste(args: argparse.Namespace) -> None:
     print(f"paste '{args.paste}' copied to the clipboard")
 
 
-def list_pastes(_: argparse.Namespace) -> None:
-    print("available pastes:")
-    for paste in pastes_path.iterdir():
-        print(f" - {paste.stem} (size: {paste.stat().st_size} bytes)")
-
-
 def write_paste(args: argparse.Namespace) -> None:
+    """write a new paste"""
+
     if args.content == "":
         args.content = pyperclip.paste()
 
@@ -43,12 +41,22 @@ def write_paste(args: argparse.Namespace) -> None:
 
 
 def rm_paste(args: argparse.Namespace) -> None:
+    """remove a paste"""
+
     paste_path: Path = pastes_path / args.paste
     if paste_path.exists():
         paste_path.unlink()
         print(f"paste '{args.paste}' removed")
     else:
         print(f"error: paste '{args.paste}' does not exist")
+
+
+def list_pastes(_: argparse.Namespace) -> None:
+    """list all available pastes"""
+
+    print("available pastes:")
+    for paste in pastes_path.iterdir():
+        print(f" - {paste.stem} (size: {paste.stat().st_size} bytes)")
 
 
 def main() -> None:
@@ -71,10 +79,6 @@ def main() -> None:
     copy_parser.add_argument("paste", help="name of the paste")
     copy_parser.set_defaults(func=copy_paste)
 
-    # list all available pastes
-    list_parser = subparsers.add_parser("list", help="list all available pastes")
-    list_parser.set_defaults(func=list_pastes)
-
     # write a new paste
     save_parser = subparsers.add_parser("write", help="write a new paste")
     save_parser.add_argument(
@@ -96,6 +100,10 @@ def main() -> None:
         help="name of the paste",
     )
     rm_parser.set_defaults(func=rm_paste)
+
+    # list all available pastes
+    list_parser = subparsers.add_parser("list", help="list all available pastes")
+    list_parser.set_defaults(func=list_pastes)
 
     args = parser.parse_args()
     args.func(args)
