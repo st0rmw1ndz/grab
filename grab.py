@@ -7,12 +7,14 @@ pastes_path: Path = Path("pastes")
 
 
 def copy_paste(args: argparse.Namespace) -> None:
-    paste = pastes_path / args.paste
-    if not paste.exists():
+    paste_path: Path = pastes_path / args.paste
+    if not paste_path.exists():
         print(f"error: paste '{args.paste}' does not exist")
         return
-    with Path.open(paste, mode="r") as f:
+
+    with Path.open(paste_path, mode="r") as f:
         text = f.read()
+
     pyperclip.copy(text)
     print(f"paste '{args.paste}' copied to the clipboard")
 
@@ -33,23 +35,27 @@ def write_paste(args: argparse.Namespace) -> None:
         with Path.open(args.content, mode="r") as f:
             args.content = f.read()
 
-    paste = pastes_path / args.paste
-    with Path.open(paste, mode="w") as f:
+    paste_path: Path = pastes_path / args.paste
+    with Path.open(paste_path, mode="w") as f:
         f.write(args.content)
 
-    print(f"paste '{args.paste}' saved (size: {paste.stat().st_size} bytes)")
+    print(f"paste '{args.paste}' saved (size: {paste_path.stat().st_size} bytes)")
 
 
 def rm_paste(args: argparse.Namespace) -> None:
-    paste = pastes_path / args.paste
-    if paste.exists():
-        paste.unlink()
+    paste_path: Path = pastes_path / args.paste
+    if paste_path.exists():
+        paste_path.unlink()
         print(f"paste '{args.paste}' removed")
     else:
         print(f"error: paste '{args.paste}' does not exist")
 
 
 def main() -> None:
+    # making sure the pastes directory exists
+    if not pastes_path.exists():
+        pastes_path.mkdir()
+
     parser = argparse.ArgumentParser(
         description="copy common pastes to the clipboard",
         epilog="source code: https://github.com/st0rmw1ndz/grab",
