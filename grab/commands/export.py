@@ -16,7 +16,7 @@ def export_paste(args: argparse.Namespace) -> None:
     with Path.open(paste_path, mode="r") as f:
         text = f.read()
 
-    with Path.open(args.output, mode="w") as f:
+    with Path.open(output_path, mode="w") as f:
         f.write(text)
 
     print(f"paste '{args.paste}' exported to '{args.output}'")
