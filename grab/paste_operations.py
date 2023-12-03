@@ -5,7 +5,7 @@ from grab import pastes_folder
 
 
 def ensure_pastes_directory_exists() -> None:
-    """ensure the pastes directory exists"""
+    """Ensures the pastes directory exists."""
 
     if not pastes_folder.exists():
         pastes_folder.mkdir()
@@ -25,6 +25,6 @@ def ensure_paste_exists(func):
 
 
 def get_paste_path(paste_name: str) -> Path:
-    """get the path of a paste"""
+    """Gets the path of a paste."""
 
     return pastes_folder / (paste_name + ".txt")

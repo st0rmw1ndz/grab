@@ -24,7 +24,7 @@ setuptools.setup(
     install_requires=packages,
     entry_points={
         "console_scripts": [
-            "grab=grab.__main__:main",
+            "grab=grab.grab:main",
         ]
     },
     python_requires=">=3.11",

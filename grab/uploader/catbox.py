@@ -1,4 +1,3 @@
-import mimetypes
 from pathlib import Path
 
 from grab.uploader import Uploader
@@ -12,11 +11,7 @@ class CatboxUploader(Uploader):
         params = {
             "reqtype": "fileupload",
             "userhash": "",
-            "fileToUpload": (
-                file.name,
-                file.read_bytes(),
-                mimetypes.guess_type(file.name)[0],
-            ),
+            "fileToUpload": (file.name, file.read_bytes(), "plain/text"),
         }
         resp = self.post(params)
         return resp.text
