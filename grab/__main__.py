@@ -1,72 +1,11 @@
 import argparse
-from pathlib import Path
 
-import pyperclip
-
-pastes_path: Path = Path.home() / ".grab"
-
-
-def copy_paste(args: argparse.Namespace) -> None:
-    """copy a paste to the clipboard"""
-
-    paste_path: Path = pastes_path / args.paste
-    if not paste_path.exists():
-        print(f"error: paste '{args.paste}' does not exist")
-        return
-
-    with Path.open(paste_path, mode="r") as f:
-        text = f.read()
-
-    pyperclip.copy(text)
-    print(f"paste '{args.paste}' copied to the clipboard")
-
-
-def write_paste(args: argparse.Namespace) -> None:
-    """write a new paste"""
-
-    if args.content == "":
-        args.content = "\n".join(pyperclip.paste().splitlines())
-
-    # checking if the content is a file path that exists,
-    # if so, read the file and use its content
-    if Path(args.content).exists():
-        with Path.open(args.content, mode="r") as f:
-            args.content = f.read()
-
-    paste_path: Path = pastes_path / args.paste
-    with Path.open(paste_path, mode="w") as f:
-        f.write(args.content)
-
-    print(f"paste '{args.paste}' saved (size: {paste_path.stat().st_size} bytes)")
-
-
-def rm_paste(args: argparse.Namespace) -> None:
-    """remove a paste"""
-
-    paste_path: Path = pastes_path / args.paste
-    if paste_path.exists():
-        paste_path.unlink()
-        print(f"paste '{args.paste}' removed")
-    else:
-        print(f"error: paste '{args.paste}' does not exist")
-
-
-def list_pastes(_: argparse.Namespace) -> None:
-    """list all available pastes"""
-
-    if len(list(pastes_path.iterdir())) == 0:
-        print("error: no pastes available")
-        return
-
-    print("available pastes:")
-    for paste in pastes_path.iterdir():
-        print(f" - {paste.stem} (size: {paste.stat().st_size} bytes)")
+from grab import commands
+from grab.utils import ensure_pastes_directory_exists
 
 
 def main() -> None:
-    # making sure the pastes directory exists
-    if not pastes_path.exists():
-        pastes_path.mkdir()
+    ensure_pastes_directory_exists()
 
     parser = argparse.ArgumentParser(
         description="simple paste system",
@@ -78,32 +17,53 @@ def main() -> None:
     # copy a paste to the clipboard
     copy_parser = subparsers.add_parser("copy", help="copy a paste to the clipboard")
     copy_parser.add_argument("paste", help="name of the paste")
-    copy_parser.set_defaults(func=copy_paste)
+    copy_parser.set_defaults(func=commands.copy_paste)
 
     # write a new paste
     save_parser = subparsers.add_parser("write", help="write a new paste")
     save_parser.add_argument("paste", help="name of the paste")
     save_parser.add_argument(
         "content",
-        help="content of the paste (string literal or file path)",
+        help="content of the paste (string literal or file path) (default: clipboard)",
         nargs="?",
         default="",
     )
-    save_parser.set_defaults(func=write_paste)
+    save_parser.set_defaults(func=commands.write_paste)
 
     # remove a paste
     rm_parser = subparsers.add_parser("rm", help="remove a paste")
     rm_parser.add_argument("paste", help="name of the paste")
-    rm_parser.set_defaults(func=rm_paste)
+    rm_parser.set_defaults(func=commands.rm_paste)
 
     # list all available pastes
     list_parser = subparsers.add_parser("list", help="list all available pastes")
-    list_parser.set_defaults(func=list_pastes)
+    list_parser.set_defaults(func=commands.list_pastes)
 
+    # open a paste in the default text editor
+    edit_parser = subparsers.add_parser(
+        "edit", help="open a paste in the default text editor"
+    )
+    edit_parser.add_argument("paste", help="name of the paste")
+    edit_parser.set_defaults(func=commands.edit_paste)
+
+    # rename a paste
+    rename_parser = subparsers.add_parser("rename", help="rename a paste")
+    rename_parser.add_argument("paste", help="old name of the paste")
+    rename_parser.add_argument("new", help="new name of the paste")
+    rename_parser.set_defaults(func=commands.rename_paste)
+
+    # view a paste
+    view_parser = subparsers.add_parser("view", help="view a paste")
+    view_parser.add_argument("paste", help="name of the paste")
+    view_parser.set_defaults(func=commands.view_paste)
+
+    # parse the arguments
     args = parser.parse_args()
+    # print help if no command is given
     if not args.command:
         parser.print_help()
         return
+    # call the function associated with the command
     args.func(args)
 
 
