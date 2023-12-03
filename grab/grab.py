@@ -81,4 +81,5 @@ def main() -> None:
     args, parser = parse_commands()
     if not args.command:
         parser.print_help()
+        return
     args.func(args)
