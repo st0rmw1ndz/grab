@@ -9,7 +9,7 @@ def export_paste(args: argparse.Namespace) -> None:
     """export a paste"""
 
     paste_path: Path = get_paste_path(args.paste)
-    output_path: Path = Path(args.output)
+    output_path: Path = Path(args.output).expanduser()
     # create the output directory if it doesn't exist
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
