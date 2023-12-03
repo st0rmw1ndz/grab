@@ -2,6 +2,8 @@ from pathlib import Path
 
 import setuptools
 
+import grab
+
 with Path.open("README.md", mode="r") as f:
     long_description = f.read()
 
@@ -10,7 +12,7 @@ with Path.open("requirements.txt", mode="r") as f:
 
 setuptools.setup(
     name="grab",
-    version="1.0.1",
+    version=grab.__version__,
     author="st0rm",
     author_email="inthishouseofcards@gmail.com",
     description="simple paste system",
