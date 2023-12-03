@@ -2,6 +2,8 @@
 
 simple paste system
 
+(out of date readme for now)
+
 ## installation
 
 ```
