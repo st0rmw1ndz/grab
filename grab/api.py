@@ -132,4 +132,5 @@ def edit_paste(paste: str, editor: str) -> None:
     """
     if not does_paste_exist(paste):
         raise PasteNotFoundError(paste=paste)
+    print(editor, DEFAULT_PASTES_PATH.joinpath(paste))
     subprocess.run([editor, DEFAULT_PASTES_PATH.joinpath(paste)], shell=True)
