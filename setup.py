@@ -1,31 +1,19 @@
-from pathlib import Path
+#  Copyright (c) 2023 frosty.
+#
+#  This file is released under the "MIT License". Please see the LICENSE file that should have
+#  been included as part of this package for more information.
 
-import setuptools
+from setuptools import find_packages, setup
 
-import grab
-
-with Path.open("README.md", mode="r") as f:
-    long_description = f.read()
-
-with Path.open("requirements.txt", mode="r") as f:
-    packages = f.read().splitlines()
-
-setuptools.setup(
+setup(
     name="grab",
-    version=grab.__version__,
-    author="st0rm",
-    author_email="inthishouseofcards@gmail.com",
-    description="simple paste system",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
-    license="MIT",
-    url="https://github.com/st0rmw1ndz/grab",
-    packages=setuptools.find_packages(),
-    install_requires=packages,
+    version="1.1.0",
+    py_modules=["grab"],
+    install_requires=["Click", "pyperclip", "PyYAML"],
+    packages=find_packages(),
     entry_points={
         "console_scripts": [
-            "grab=grab.grab:main",
-        ]
+            "grab = grab.__main__:cli",
+        ],
     },
-    python_requires=">=3.11",
 )
