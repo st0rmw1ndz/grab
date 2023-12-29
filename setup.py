@@ -7,7 +7,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="grab",
-    version="1.1.0",
+    version="1.1.1",
     py_modules=["grab"],
     install_requires=["Click", "pyperclip", "PyYAML"],
     packages=find_packages(),
