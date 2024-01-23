@@ -16,18 +16,17 @@ line-length = 79
 indent-width = 4
 
 [tool.ruff.lint]
-select = ["F", "E", "W", "I", "Q", "TCH", "PTH", "N"]
-ignore = []
+select = [
+    "F",   # Pyflakes
+    "E",   # pycodestyle Error
+    "W",   # pycodestyle Warning
+    "I",   # isort
+    "N",   # pep8-naming
+    "Q",   # flake8-quotes
+    "TCH", # flake8-type-checking
+    "PTH", # flake8-use-pathlib
+]
 fixable = ["ALL"]
-unfixable = []
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
-skip-magic-trailing-comma = false
-line-ending = "auto"
-docstring-code-format = false
 
 [build-system]
 requires = ["setuptools", "setuptools-scm"]
