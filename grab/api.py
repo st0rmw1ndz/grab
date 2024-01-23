@@ -154,7 +154,7 @@ def edit_paste(paste: str, editor: str) -> None:
     if not does_paste_exist(paste):
         raise PasteNotFoundError(paste=paste)
     print(editor, PASTES_DIRECTORY.joinpath(paste))
-    subprocess.run([editor, PASTES_DIRECTORY.joinpath(paste)], shell=False)
+    subprocess.run([editor, PASTES_DIRECTORY.joinpath(paste)], shell=True)
 
 
 def edit_config(editor: str) -> None:
