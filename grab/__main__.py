@@ -13,13 +13,12 @@ from grab.errors import PasteNotFoundError
 @click.group(context_settings=dict(help_option_names=["-h", "--help"]))
 @click.version_option(__version__, "-V", "--version")
 @click.pass_context
-def cli(ctx: click.Context, verbose: bool) -> None:
+def cli(ctx: click.Context) -> None:
     """A stupidly simple paste system.
 
     Copyright (c) 2024 frosty.
     """
     api.ensure_required_files()
-    ctx.obj = {"verbose": verbose}
     try:
         ctx.obj["config"] = api.validate_config(api.read_config(CONFIG_PATH))
     except Exception as e:
