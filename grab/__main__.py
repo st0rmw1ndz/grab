@@ -19,6 +19,7 @@ def cli(ctx: click.Context) -> None:
     Copyright (c) 2024 frosty.
     """
     api.ensure_required_files()
+    ctx.ensure_object(dict)
     try:
         ctx.obj["config"] = api.validate_config(api.read_config(CONFIG_PATH))
     except Exception as e:
