@@ -18,5 +18,5 @@ class DisallowedPathDirectoryError(GrabError):
 class InvalidConfigError(GrabError):
     def __init__(self, invalid_keys: List[str]) -> None:
         super().__init__(
-            f"Config file contains invalid keys: {', '.join(invalid_keys)}"
+            f"Config file contains invalid keys: {', '.join(invalid_keys)}",
         )

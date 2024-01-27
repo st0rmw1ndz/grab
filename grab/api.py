@@ -55,7 +55,6 @@ def ensure_required_files() -> None:
         PASTES_DIRECTORY.mkdir()
     if not CONFIG_PATH.is_file():
         CONFIG_PATH.touch()
-    if not CONFIG_PATH.stat().st_size:
         dump_default_config()
 
 
@@ -138,7 +137,7 @@ def get_paste_list() -> List[Tuple[str, int]]:
 
     :return: List of pastes in the format of (name, byte size).
     """
-    if not (pastes := [paste for paste in PASTES_DIRECTORY.iterdir()]):
+    if not (pastes := list(PASTES_DIRECTORY.iterdir())):
         return []
     return [(paste.name, paste.stat().st_size) for paste in pastes]
 
