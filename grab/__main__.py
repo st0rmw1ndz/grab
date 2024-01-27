@@ -1,3 +1,5 @@
+# TODO: Implement --verbose across the commands
+
 from pathlib import Path
 
 import click
@@ -9,20 +11,20 @@ from grab.errors import PasteNotFoundError
 
 
 @click.group(context_settings=dict(help_option_names=["-h", "--help"]))
-@click.version_option(__version__)
+@click.version_option(__version__, "-V", "--version")
 @click.pass_context
-def cli(ctx: click.Context) -> None:
+def cli(ctx: click.Context, verbose: bool) -> None:
     """A stupidly simple paste system.
 
     Copyright (c) 2024 frosty.
     """
     api.ensure_required_files()
-    ctx.ensure_object(dict)
+    ctx.obj = {"verbose": verbose}
     try:
-        config_data = api.validate_config(api.read_config(CONFIG_PATH))
-        ctx.obj["config"] = config_data
+        ctx.obj["config"] = api.validate_config(api.read_config(CONFIG_PATH))
     except Exception as e:
-        click.echo(f"Error: Failed parsing the config file:\n{e}")
+        click.echo("Error: Failed parsing the config file:")
+        click.echo(e)
         ctx.exit(1)
 
 
@@ -58,8 +60,8 @@ def edit_config(ctx: click.Context, editor: str) -> None:
 @config_group.command("reset")
 @click.pass_context
 @click.option(
-    "--yes",
     "-y",
+    "--yes",
     is_flag=True,
     help="Bypass confirmation and reset to defaults.",
 )
@@ -68,7 +70,7 @@ def reset_config(ctx: click.Context, yes: bool):
 
     if not yes:
         confirmed = click.confirm(
-            "Are you sure you want to reset to defaults?", default=True
+            "Are you sure you want to reset to defaults?", default=False
         )
         if not confirmed:
             click.echo("Reset operation aborted.")
@@ -81,7 +83,7 @@ def reset_config(ctx: click.Context, yes: bool):
 @cli.command("get")
 @click.pass_context
 @click.option(
-    "--copy", is_flag=True, help="Copy the content to the clipboard."
+    "-c", "--copy", is_flag=True, help="Copy the content to the clipboard."
 )
 @click.argument("paste", type=str)
 @click.argument("location", type=str, default="")
@@ -113,8 +115,9 @@ def get_command(
         ctx.exit(1)
     except Exception as e:
         click.echo(
-            f"Error: Something went wrong getting content of paste '{paste}':\n{e}"
+            f"Error: Something went wrong getting content of paste '{paste}':"
         )
+        click.echo(e)
         ctx.exit(1)
 
 
@@ -128,14 +131,56 @@ def write_command(ctx: click.Context, paste: str, content: str) -> None:
     If it doesn't exist, it will be created.
     """
     try:
-        if content == "":
-            content = "\n".join(pyperclip.paste().splitlines())
+        content = (
+            "\n".join(pyperclip.paste().splitlines())
+            if not content
+            else content
+        )
         api.write_paste(paste, content)
         click.echo(f"Successfully written to paste '{paste}'.")
     except Exception as e:
+        click.echo(f"Error: Something went wrong writing to paste '{paste}':")
+        click.echo(e)
+        ctx.exit(1)
+
+
+@cli.command("clone")
+@click.pass_context
+@click.option(
+    "-y",
+    "--yes",
+    is_flag=True,
+    help="Bypass confirmation and overwrite any existing pastes.",
+)
+@click.argument("paste", type=str)
+@click.argument("dest", type=str)
+def clone_command(
+    ctx: click.Context, yes: bool, paste: str, dest: str
+) -> None:
+    """Write the content of one paste to another.
+
+    If the DEST doesn't already exist, it will be created. If it does exist,
+    you will be prompted to confirm overwriting it.
+    """
+    try:
+        if not api.does_paste_exist(paste):
+            click.echo(f"Error: Paste '{paste} does not exist.")
+            ctx.exit(1)
+        if not yes and api.does_paste_exist(dest):
+            confirmed = click.confirm(
+                f"Are you sure you want to overwrite paste '{dest}'?",
+                default=False,
+            )
+            if not confirmed:
+                click.echo("Clone operation aborted.")
+                return
+        api.write_paste(dest, api.get_paste_content(paste))
+        click.echo(f"Successfully cloned paste '{paste}' to '{dest}'.")
+    except Exception as e:
         click.echo(
-            f"Error: Something went wrong writing to paste '{paste}':\n{e}"
+            f"Error: Something went wrong cloning paste '{paste}' to '{dest}':"
         )
+        click.echo(e)
         ctx.exit(1)
 
 
@@ -150,9 +195,8 @@ def rename_command(ctx: click.Context, paste: str, name: str) -> None:
         api.rename_paste(paste, name)
         click.echo(f"Successfully renamed paste '{paste}' to '{name}'.")
     except Exception as e:
-        click.echo(
-            f"Error: Something went wrong renaming paste '{paste}':\n{e}"
-        )
+        click.echo(f"Error: Something went wrong renaming paste '{paste}':")
+        click.echo(e)
         ctx.exit(1)
 
 
@@ -166,9 +210,8 @@ def rm_command(ctx: click.Context, paste: str) -> None:
         api.rm_paste(paste)
         click.echo(f"Successfully removed paste '{paste}'.")
     except Exception as e:
-        click.echo(
-            f"Error: Something went wrong removing paste '{paste}':\n{e}"
-        )
+        click.echo(f"Error: Something went wrong removing paste '{paste}':")
+        click.echo(e)
         ctx.exit(1)
 
 
@@ -182,9 +225,8 @@ def touch_command(ctx: click.Context, paste: str) -> None:
         api.write_paste(paste, "")
         click.echo(f"Successfully created paste '{paste}'.")
     except Exception as e:
-        click.echo(
-            f"Error: Something went wrong creating paste '{paste}':\n{e}"
-        )
+        click.echo(f"Error: Something went wrong creating paste '{paste}':")
+        click.echo(e)
         ctx.exit(1)
 
 
@@ -219,9 +261,8 @@ def edit_command(ctx: click.Context, paste: str, editor: str) -> None:
         click.echo(f"Error: Paste '{paste}' not found.")
         ctx.exit(1)
     except Exception as e:
-        click.echo(
-            f"Error: Something went wrong editing paste '{paste}':\n{e}"
-        )
+        click.echo(f"Error: Something went wrong editing paste '{paste}':")
+        click.echo(e)
         ctx.exit(1)
 
 
