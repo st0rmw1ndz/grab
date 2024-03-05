@@ -32,15 +32,6 @@ pub struct GetCommand {
 
 #[derive(Debug, Args)]
 pub struct ConfigGenerateCommand {
-    /// Path of the file to generate
-    pub path: PathBuf,
-
-    #[command(flatten)]
-    pub globals: Globals,
-}
-
-#[derive(Debug, Args)]
-pub struct ConfigResetCommand {
     /// Skip asking for confirmation
     #[arg(short = 'y', long)]
     pub yes: bool,
@@ -53,9 +44,6 @@ pub struct ConfigResetCommand {
 pub enum ConfigSubcommands {
     /// Generate a new config
     Generate(ConfigGenerateCommand),
-
-    /// Reset the current config
-    Reset(ConfigResetCommand),
 }
 
 #[derive(Debug, Args)]
