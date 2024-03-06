@@ -1,17 +1,28 @@
 use clap::Parser;
 
-use crate::cli::{Cli, Commands};
-use crate::commands::config::handle_config;
-use crate::commands::get::handle_get;
+use crate::cli::{Cli, Executable};
+use crate::data::file_exists_and_has_content;
+use crate::models::Config;
 
 mod cli;
 mod commands;
 mod data;
+mod models;
 
-fn main() {
+fn main() -> eyre::Result<()> {
     let args = Cli::parse();
-    match args.command {
-        Commands::Get(data) => handle_get(data),
-        Commands::Config(data) => handle_config(data),
+
+    env_logger::Builder::new()
+        .filter_level(args.globals.verbose.log_level_filter())
+        .init();
+
+    if !file_exists_and_has_content(&args.globals.config) {
+        log::warn!("It seems the config file provided either doesn't exist, or has no data. A default will be created. You can edit this at using 'config edit'.");
+        let config = Config::new();
+        config.write(&args.globals.config);
     }
+
+    args.command.execute()?;
+
+    Ok(())
 }

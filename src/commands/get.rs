@@ -1,7 +1,10 @@
-use crate::cli::GetCommand;
+use crate::cli::commands::get::GetCommand;
+use crate::cli::Executable;
 
-pub fn handle_get(data: GetCommand) {
-    if !data.globals.quiet {
-        println!("{:#?}", data);
+impl Executable for GetCommand {
+    fn execute(&self) -> eyre::Result<()> {
+        println!("{:#?}", self);
+
+        Ok(())
     }
 }
